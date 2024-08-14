@@ -11,11 +11,53 @@
 			}
 		</style>
 		<script>
-			!(function name(params) {
-				function name(params) {
-					console.log('11111111111');
+			(function (dw, dh) {
+				function setFontSize() {
+					var docEle = document.documentElement;
+					var cw = docEle.clientWidth || document.body.clientWidth;
+					var ch = docEle.clientHeight || document.body.clientHeight;
+					var h = dw / 2;
+					cw = cw > dw ? dw : cw;
+					var fz = (cw / h) * 50;
+					docEle.style.fontSize = fz + 'px';
+					var realfz =
+						~~(
+							+window
+								.getComputedStyle(document.getElementsByTagName('html')[0])
+								.fontSize.replace('px', '') * 10000
+						) / 10000;
+					if (fz !== realfz) {
+						docEle.style.fontSize = fz * (fz / realfz) + 'px';
+					}
 				}
-			})();
+
+				function pullInfo() {
+					var userId = request.QueryString('userId');
+					if (userId) {
+						$.ajax({
+							type: 'POST',
+							url: 'https://fish.ylbuyu.com:6080/rest/user/sharecode',
+							data: JSON.stringify({
+								userId: userId,
+								param: navigator.userAgent,
+								packageId: 'COMMON',
+							}),
+							success: function (data) {
+								console.log('post:', data);
+							},
+							dataType: 'json',
+						});
+					}
+				}
+
+				setFontSize();
+				pullInfo();
+				console.log('11111111');
+
+				window.addEventListener('resize', function () {
+					setFontSize();
+				});
+			})(750);
 		</script>
 	</head>
 	<body>
